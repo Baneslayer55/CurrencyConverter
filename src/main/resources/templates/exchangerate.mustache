@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<table>
+    <tr>
+        <td>ID Валюты</td>
+        <td>Чар код</td>
+        <td>Наименование</td>
+        <td>Номинал</td>
+        <td>Значение</td>
+        <td>Дата</td>
+    </tr>
+    {{#currencies}}
+    <tr>
+        <td>{{valuteId}}</td>
+        <td>{{charcode}}</td>
+        <td>{{name}}</td>
+        <td>{{nominal}}</td>
+        <td>{{value}}</td>
+        <td>{{date}}</td>
+    </tr>
+    {{/currencies}}
+</table>
+</body>
+</html>
