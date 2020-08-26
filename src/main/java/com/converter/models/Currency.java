@@ -1,12 +1,17 @@
 package com.converter.models;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Date;
 
-//@Entity
+@Entity
 public class Currency {
-    /*@Id
+
+    @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private Integer id;*/
+    private Integer id;
 
     private String valuteId;
 
@@ -24,7 +29,6 @@ public class Currency {
     }
 
     public Currency(String valuteId, String charcode, String name, Double nominal, Double value, Date date) {
-        //his.id = id;
         this.valuteId = valuteId;
         this.charcode = charcode;
         this.name = name;
@@ -33,13 +37,13 @@ public class Currency {
         this.date = date;
     }
 
-    /*public Integer getId() {
+    public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }*/
+    }
 
     public String getValuteId() {
         return valuteId;
