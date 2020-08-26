@@ -72,7 +72,7 @@ public class MainController {
     @GetMapping("/exchangerate")
     public String exchangerate(Map<String, Object> model) throws IOException, ParseException {
 
-        Iterable<Currency> currencies = CurrencyRate.GetActualCurrency();
+        Iterable<Currency> currencies = CurrencyRate.getCurrenciesList("http://www.cbr.ru/scripts/XML_daily.asp");
 
         model.put("currencies", currencies);
 
