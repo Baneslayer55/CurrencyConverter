@@ -37,14 +37,14 @@ public class RestCurrencyController {
     @GetMapping("convert")
     public CurrencyConvert currencyConvert(@AuthenticationPrincipal User user) throws IOException, ParseException {
 
-        //тестим, конвертация с юзером работает, без юзера - нет
+        //тестим, конвертация с юзером работает, без юзера - нет //нашел ошибку. много с одинаковыми айдишниками.
         CurrencyConvert currencyConvert = new CurrencyConvert();
 
         currencyConvert.setFirstValute(currencyRepo.findByValuteId("R01010")); //исходная валюта
 
         currencyConvert.setSecondValute(currencyRepo.findByValuteId("R01060")); // в какую конвертим
 
-        currencyConvert.setFirstValuteAmount(10.0);
+        currencyConvert.setFirstValuteAmount(100.0);
 
         currencyConvert.setUser(user);
 
@@ -60,5 +60,11 @@ public class RestCurrencyController {
     public Iterable<CurrencyConvert> history(){
 
         return currencyConvertRepo.findAll();
+    }
+
+    @GetMapping("deleteall")
+    public void deleteAllCurrencies(){
+        currencyConvertRepo.deleteAll();
+        currencyRepo.deleteAll();
     }
 }
