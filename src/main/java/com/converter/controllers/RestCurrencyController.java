@@ -15,10 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 
 @RestController
 @RequestMapping("currencyrateinfo")
 public class RestCurrencyController {
+
+    private Date currentDate= new Date();;
 
     @Autowired
     CurrencyRepo currencyRepo;
@@ -26,23 +29,38 @@ public class RestCurrencyController {
     @Autowired
     CurrencyConvertRepo currencyConvertRepo;
 
+    @GetMapping("archive")
+    public Iterable<Currency> archive(){
+        return currencyRepo.findAll();
+    }
+
     @GetMapping("actualcurrencyrate")
     public Iterable<Currency> currenciesRateInfo() throws IOException, ParseException {
 
-        currencyRepo.saveAll(CurrencyRate.getCurrenciesList("http://www.cbr.ru/scripts/XML_daily.asp")); // кидает дубликаты, ввести проверку
+        currentDate.setHours(0);
+        currentDate.setMinutes(0);
+        currentDate.setSeconds(0);
 
-        return currencyRepo.findAll(); //CurrencyRate.getCurrenciesList("http://www.cbr.ru/scripts/XML_daily.asp");
+        for (Currency cur:CurrencyRate.getCurrenciesList("http://www.cbr.ru/scripts/XML_daily.asp")) {
+            if (currencyRepo.findByValuteIdAndDate(cur.getValuteId(), cur.getDate()) == null){
+                currencyRepo.save(cur);
+            }
+        }
+        return currencyRepo.findByDate(currentDate); //CurrencyRate.getCurrenciesList("http://www.cbr.ru/scripts/XML_daily.asp");
     }
 
     @GetMapping("convert")
     public CurrencyConvert currencyConvert(@AuthenticationPrincipal User user) throws IOException, ParseException {
 
-        //тестим, конвертация с юзером работает, без юзера - нет //нашел ошибку. много с одинаковыми айдишниками.
         CurrencyConvert currencyConvert = new CurrencyConvert();
 
-        currencyConvert.setFirstValute(currencyRepo.findByValuteId("R01010")); //исходная валюта
+        currentDate.setHours(0);
+        currentDate.setMinutes(0);
+        currentDate.setSeconds(0);
 
-        currencyConvert.setSecondValute(currencyRepo.findByValuteId("R01060")); // в какую конвертим
+        currencyConvert.setFirstValute(currencyRepo.findByValuteIdAndDate("R01020A",currentDate)); //исходная валюта
+
+        currencyConvert.setSecondValute(currencyRepo.findByValuteIdAndDate("R01720", currentDate)); // в какую конвертим
 
         currencyConvert.setFirstValuteAmount(100.0);
 
@@ -51,20 +69,33 @@ public class RestCurrencyController {
         currencyConvert.setSecondValuteAmount(CurrencyRate.convert(currencyConvert.getFirstValute(),
                                                                    currencyConvert.getSecondValute(),
                                                                    currencyConvert.getFirstValuteAmount()));
-        currencyConvertRepo.save(currencyConvert);
+
+        if(user != null){
+            currencyConvertRepo.save(currencyConvert);
+        }
 
         return currencyConvert;
     }
 
     @GetMapping("history")
-    public Iterable<CurrencyConvert> history(){
+    public Iterable<CurrencyConvert> history(@AuthenticationPrincipal User user){
 
-        return currencyConvertRepo.findAll();
+        return currencyConvertRepo.findByUser(user);
     }
 
-    @GetMapping("deleteall")
+    @GetMapping("deleteall")//для тестов
     public void deleteAllCurrencies(){
         currencyConvertRepo.deleteAll();
         currencyRepo.deleteAll();
+    }
+
+    @GetMapping("findvalute")
+    public Currency currency(){
+        currentDate.setHours(0);
+        currentDate.setMinutes(0);
+        currentDate.setSeconds(0);
+        Currency cur = currencyRepo.findByValuteIdAndDate("R01720", currentDate);
+        return cur;
+
     }
 }
