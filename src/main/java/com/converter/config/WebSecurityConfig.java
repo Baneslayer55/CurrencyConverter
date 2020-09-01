@@ -21,7 +21,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                     .antMatchers("/", "/registration", "/currencyrateinfo/actualcurrencyrate",
-                                "/currencyrateinfo/convert","/currencyrateinfo/findvalute").permitAll()
+                                "/currencyrateinfo/convert","/currencyrateinfo/findvalute", "/restreg/registration").permitAll()
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()

@@ -24,7 +24,7 @@ public class RestCurrencyController {
 
     private Date currentDate= new Date();
 
-    private void setDate(){
+    private void setDateTime(){
         currentDate.setHours(0);
         currentDate.setMinutes(0);
         currentDate.setSeconds(0);
@@ -44,7 +44,7 @@ public class RestCurrencyController {
     @GetMapping("actualcurrencyrate")
     public Iterable<Currency> currenciesRateInfo() throws IOException, ParseException {
 
-        setDate();
+        setDateTime();
 
         for (Currency cur:CurrencyRate.getCurrenciesList("http://www.cbr.ru/scripts/XML_daily.asp")) {
             if (currencyRepo.findByValuteIdAndDate(cur.getValuteId(), cur.getDate()) == null){
@@ -63,7 +63,7 @@ public class RestCurrencyController {
 
         CurrencyConvert currencyConvert = new CurrencyConvert();
 
-        setDate();
+        setDateTime();
 
         currencyConvert.setFirstValute(currencyRepo.findByValuteIdAndDate(firstValuteId,currentDate)); //исходная валюта
 
@@ -90,7 +90,7 @@ public class RestCurrencyController {
         return currencyConvertRepo.findByUser(user);
     }
 
-    @GetMapping("deleteall")//для тестов
+    @GetMapping("deleteall")//для тестов.
     public void deleteAllCurrencies(){
         currencyConvertRepo.deleteAll();
         currencyRepo.deleteAll();
@@ -99,7 +99,7 @@ public class RestCurrencyController {
     @GetMapping("findvalute")
     public Currency currency(@RequestParam(value = "valuteId") String valuteId){
 
-        setDate();
+        setDateTime();
 
         Currency cur = currencyRepo.findByValuteIdAndDate(valuteId, currentDate);//R01720
         return cur;
